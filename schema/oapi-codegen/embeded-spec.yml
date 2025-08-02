@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/deepmap/oapi-codegen/HEAD/configuration-schema.json
+package: oapi
+generate:
+  embedded-spec: true
+output: ../app/handlers/http/oapi/spec.gen.go
