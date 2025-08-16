@@ -5,7 +5,7 @@
 ## プロジェクト構成
 
 ```
-openapi-golang-typescript/
+discriminator-demo/
 ├── app/                    # Goバックエンド
 │   ├── main.go            # メインサーバーファイル
 │   ├── go.mod             # Go依存関係

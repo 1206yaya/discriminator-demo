@@ -212,6 +212,11 @@ components:
           type: string
           format: date-time
           description: 更新日時
+        profileFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfileField'
+          description: ユーザープロフィール項目
     CreateUserRequest:
       type: object
       required:
@@ -225,6 +230,11 @@ components:
           type: string
           format: email
           description: メールアドレス
+        profileFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfileField'
+          description: ユーザープロフィール項目
     UpdateUserRequest:
       type: object
       properties:
@@ -235,6 +245,11 @@ components:
           type: string
           format: email
           description: メールアドレス
+        profileFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfileField'
+          description: ユーザープロフィール項目
     HelloResponse:
       type: object
       required:
@@ -254,3 +269,75 @@ components:
         code:
           type: string
           description: エラーコード
+
+    ProfileField:
+      oneOf:
+        - $ref: "#/components/schemas/TextProfileField"
+        - $ref: "#/components/schemas/NumberProfileField"
+        - $ref: "#/components/schemas/GenderProfileField"
+      discriminator:
+        propertyName: fieldType
+        mapping:
+          text: "#/components/schemas/TextProfileField"
+          number: "#/components/schemas/NumberProfileField"
+          gender: "#/components/schemas/GenderProfileField"
+
+    TextProfileField:
+      type: object
+      required:
+        - fieldType
+        - name
+        - value
+      properties:
+        fieldType:
+          type: string
+          enum:
+            - text
+          description: フィールドタイプ
+        name:
+          type: string
+          description: フィールド名
+        value:
+          type: string
+          description: テキスト値
+
+    NumberProfileField:
+      type: object
+      required:
+        - fieldType
+        - name
+        - value
+      properties:
+        fieldType:
+          type: string
+          enum:
+            - number
+          description: フィールドタイプ
+        name:
+          type: string
+          description: フィールド名
+        value:
+          type: number
+          description: 数値
+
+    GenderProfileField:
+      type: object
+      required:
+        - fieldType
+        - name
+        - value
+      properties:
+        fieldType:
+          type: string
+          enum:
+            - gender
+          description: フィールドタイプ
+        name:
+          type: string
+          description: フィールド名
+        value:
+          type: string
+          enum:
+            - male
+            - female
+          description: 性別

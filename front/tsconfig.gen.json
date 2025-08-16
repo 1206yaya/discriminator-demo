@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "composite": true,
+    "noEmit": false,
+    "declaration": true,
+    "outDir": "./dist/gen"
+  },
+  "include": ["src/adapters/gen/**/*"]
+}

@@ -1,4 +1,4 @@
-module github.com/1206yaya/openapi-golang-typescript/app
+module github.com/1206yaya/discriminator-demo/app
 
 go 1.24.5
 

@@ -2,10 +2,10 @@ PRETTIER_VERSION=@3.5.3
 
 # Development commands
 dev-backend: ## Start Go backend server
-	@pkill -f "go run main.go" 2>/dev/null || true
+	@pkill -f "go run" 2>/dev/null || true
 	@lsof -ti:3000 | xargs kill -9 2>/dev/null || true
 	@sleep 1
-	cd app && go run main.go
+	cd app && go run .
 
 dev-frontend: ## Start frontend development server
 	@lsof -ti:3001 | xargs kill -9 2>/dev/null || true
@@ -18,7 +18,7 @@ dev: stop-dev ## Start both backend and frontend (in parallel)
 
 # Build commands
 build-backend: ## Build Go backend
-	cd app && go build -o bin/server main.go
+	cd app && go build -o bin/server .
 
 build-frontend: ## Build frontend for production
 	cd front && npm run build
@@ -83,7 +83,7 @@ setup: ## Install dependencies for both backend and frontend
 
 # Code generation
 gen gen-cli: ## Generate files from schema
-	cd schema && docker run --rm -v "${PWD}/schema/..:/local" openapitools/openapi-generator-cli:v5.4.0 generate -g typescript-axios -i /local/schema/openapi.yaml -o /local/front/src/adapters/gen --global-property skipFormModel=false && \
+	cd schema && docker run --rm -v "${PWD}/schema/..:/local" openapitools/openapi-generator-cli:v5.4.0 generate -g typescript-axios -i /local/schema/openapi.yaml -o /local/front/src/adapters/gen -t /local/schema/templates --global-property skipFormModel=false && \
 	cd ../app && \
 	oapi-codegen --config ../schema/oapi-codegen/api.yml ../schema/openapi.yaml && \
 	oapi-codegen --config ../schema/oapi-codegen/embeded-spec.yml ../schema/openapi.yaml && \
@@ -117,7 +117,7 @@ test-api: ## Test API endpoints
 # Process management
 stop-dev: ## Stop development servers
 	@echo "🛑 Stopping development servers..."
-	@pkill -f "go run main.go" 2>/dev/null || true
+	@pkill -f "go run" 2>/dev/null || true
 	@lsof -ti:3000 | xargs kill -9 2>/dev/null || true
 	@lsof -ti:3001 | xargs kill -9 2>/dev/null || true
 	@echo "✅ Development servers stopped"

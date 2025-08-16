@@ -21,5 +21,6 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src"],
+  "exclude": ["src/adapters/gen/**/*"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

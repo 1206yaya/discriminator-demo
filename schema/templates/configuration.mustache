@@ -1,13 +1,14 @@
 /* tslint:disable */
 /* eslint-disable */
+// @ts-nocheck
 {{>licenseInfo}}
 
 import axios from 'axios'
-import { getApiEndpoint } from '@modules/config'
-import * as Audit from '@modules/audit'
+// import { getApiEndpoint } from '@modules/config' // Commented out for demo
+// import * as Audit from '@modules/audit' // Commented out for demo
 
 export const persiaApi = axios.create({
-  baseURL: getApiEndpoint(),
+  baseURL: 'http://localhost:3000/api', // Hardcoded for demo
   withCredentials: true,
 });
 

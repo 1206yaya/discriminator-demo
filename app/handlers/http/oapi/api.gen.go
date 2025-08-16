@@ -4,6 +4,8 @@
 package oapi
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -13,6 +15,27 @@ import (
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
+// Defines values for GenderProfileFieldFieldType.
+const (
+	GenderProfileFieldFieldTypeGender GenderProfileFieldFieldType = "gender"
+)
+
+// Defines values for GenderProfileFieldValue.
+const (
+	GenderProfileFieldValueFemale GenderProfileFieldValue = "female"
+	GenderProfileFieldValueMale   GenderProfileFieldValue = "male"
+)
+
+// Defines values for NumberProfileFieldFieldType.
+const (
+	NumberProfileFieldFieldTypeNumber NumberProfileFieldFieldType = "number"
+)
+
+// Defines values for TextProfileFieldFieldType.
+const (
+	TextProfileFieldFieldTypeText TextProfileFieldFieldType = "text"
+)
+
 // CreateUserRequest defines model for CreateUserRequest.
 type CreateUserRequest struct {
 	// Email メールアドレス
@@ -20,6 +43,9 @@ type CreateUserRequest struct {
 
 	// Name ユーザー名
 	Name string `json:"name"`
+
+	// ProfileFields ユーザープロフィール項目
+	ProfileFields *[]ProfileField `json:"profileFields,omitempty"`
 }
 
 // Error defines model for Error.
@@ -31,11 +57,64 @@ type Error struct {
 	Message string `json:"message"`
 }
 
+// GenderProfileField defines model for GenderProfileField.
+type GenderProfileField struct {
+	// FieldType フィールドタイプ
+	FieldType GenderProfileFieldFieldType `json:"fieldType"`
+
+	// Name フィールド名
+	Name string `json:"name"`
+
+	// Value 性別
+	Value GenderProfileFieldValue `json:"value"`
+}
+
+// GenderProfileFieldFieldType フィールドタイプ
+type GenderProfileFieldFieldType string
+
+// GenderProfileFieldValue 性別
+type GenderProfileFieldValue string
+
 // HelloResponse defines model for HelloResponse.
 type HelloResponse struct {
 	// Message Hello World メッセージ
 	Message string `json:"message"`
 }
+
+// NumberProfileField defines model for NumberProfileField.
+type NumberProfileField struct {
+	// FieldType フィールドタイプ
+	FieldType NumberProfileFieldFieldType `json:"fieldType"`
+
+	// Name フィールド名
+	Name string `json:"name"`
+
+	// Value 数値
+	Value float32 `json:"value"`
+}
+
+// NumberProfileFieldFieldType フィールドタイプ
+type NumberProfileFieldFieldType string
+
+// ProfileField defines model for ProfileField.
+type ProfileField struct {
+	union json.RawMessage
+}
+
+// TextProfileField defines model for TextProfileField.
+type TextProfileField struct {
+	// FieldType フィールドタイプ
+	FieldType TextProfileFieldFieldType `json:"fieldType"`
+
+	// Name フィールド名
+	Name string `json:"name"`
+
+	// Value テキスト値
+	Value string `json:"value"`
+}
+
+// TextProfileFieldFieldType フィールドタイプ
+type TextProfileFieldFieldType string
 
 // UpdateUserRequest defines model for UpdateUserRequest.
 type UpdateUserRequest struct {
@@ -44,6 +123,9 @@ type UpdateUserRequest struct {
 
 	// Name ユーザー名
 	Name *string `json:"name,omitempty"`
+
+	// ProfileFields ユーザープロフィール項目
+	ProfileFields *[]ProfileField `json:"profileFields,omitempty"`
 }
 
 // User defines model for User.
@@ -60,6 +142,9 @@ type User struct {
 	// Name ユーザー名
 	Name string `json:"name"`
 
+	// ProfileFields ユーザープロフィール項目
+	ProfileFields *[]ProfileField `json:"profileFields,omitempty"`
+
 	// UpdatedAt 更新日時
 	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 }
@@ -69,6 +154,125 @@ type CreateUserJSONRequestBody = CreateUserRequest
 
 // UpdateUserJSONRequestBody defines body for UpdateUser for application/json ContentType.
 type UpdateUserJSONRequestBody = UpdateUserRequest
+
+// AsTextProfileField returns the union data inside the ProfileField as a TextProfileField
+func (t ProfileField) AsTextProfileField() (TextProfileField, error) {
+	var body TextProfileField
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromTextProfileField overwrites any union data inside the ProfileField as the provided TextProfileField
+func (t *ProfileField) FromTextProfileField(v TextProfileField) error {
+	v.FieldType = "text"
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeTextProfileField performs a merge with any union data inside the ProfileField, using the provided TextProfileField
+func (t *ProfileField) MergeTextProfileField(v TextProfileField) error {
+	v.FieldType = "text"
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JsonMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsNumberProfileField returns the union data inside the ProfileField as a NumberProfileField
+func (t ProfileField) AsNumberProfileField() (NumberProfileField, error) {
+	var body NumberProfileField
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromNumberProfileField overwrites any union data inside the ProfileField as the provided NumberProfileField
+func (t *ProfileField) FromNumberProfileField(v NumberProfileField) error {
+	v.FieldType = "number"
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeNumberProfileField performs a merge with any union data inside the ProfileField, using the provided NumberProfileField
+func (t *ProfileField) MergeNumberProfileField(v NumberProfileField) error {
+	v.FieldType = "number"
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JsonMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsGenderProfileField returns the union data inside the ProfileField as a GenderProfileField
+func (t ProfileField) AsGenderProfileField() (GenderProfileField, error) {
+	var body GenderProfileField
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromGenderProfileField overwrites any union data inside the ProfileField as the provided GenderProfileField
+func (t *ProfileField) FromGenderProfileField(v GenderProfileField) error {
+	v.FieldType = "gender"
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeGenderProfileField performs a merge with any union data inside the ProfileField, using the provided GenderProfileField
+func (t *ProfileField) MergeGenderProfileField(v GenderProfileField) error {
+	v.FieldType = "gender"
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JsonMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t ProfileField) Discriminator() (string, error) {
+	var discriminator struct {
+		Discriminator string `json:"fieldType"`
+	}
+	err := json.Unmarshal(t.union, &discriminator)
+	return discriminator.Discriminator, err
+}
+
+func (t ProfileField) ValueByDiscriminator() (interface{}, error) {
+	discriminator, err := t.Discriminator()
+	if err != nil {
+		return nil, err
+	}
+	switch discriminator {
+	case "gender":
+		return t.AsGenderProfileField()
+	case "number":
+		return t.AsNumberProfileField()
+	case "text":
+		return t.AsTextProfileField()
+	default:
+		return nil, errors.New("unknown discriminator value: " + discriminator)
+	}
+}
+
+func (t ProfileField) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *ProfileField) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
