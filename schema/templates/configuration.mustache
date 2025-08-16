@@ -4,23 +4,26 @@
 {{>licenseInfo}}
 
 import axios from 'axios'
-// import { getApiEndpoint } from '@modules/config' // Commented out for demo
-// import * as Audit from '@modules/audit' // Commented out for demo
+import { getApiEndpoint } from '../../modules/config'
+import * as Audit from '../../modules/audit'
 
 export const persiaApi = axios.create({
-  baseURL: 'http://localhost:3000/api', // Hardcoded for demo
-  withCredentials: true,
+  baseURL: getApiEndpoint(), // Use the configuration function
+  withCredentials: false, // Disabled to avoid CORS issues with wildcard origins
 });
 
 persiaApi.interceptors.request.use(config => {
-    const auditHeaders = {
-        'Hrb-Session-Id': Audit.getAuditSessionId(),
-        'Hrb-View-Id': Audit.getAuditViewId()
-    }
+    // Only add audit headers if audit is enabled
+    if (Audit.auditConfig.enabled) {
+        const auditHeaders = {
+            'Hrb-Session-Id': Audit.getAuditSessionId(),
+            'Hrb-View-Id': Audit.getAuditViewId()
+        }
 
-    config.headers.set({
-        ...auditHeaders
-    })
+        config.headers.set({
+            ...auditHeaders
+        })
+    }
 
     return config
 })
