@@ -135,9 +135,12 @@ stop-all: stop-dev stop-prod ## Stop all servers
 
 # Cleanup
 clean: ## Clean build artifacts
-	cd app && rm -rf bin/
-	cd front && rm -rf dist/
-	cd front && rm -rf src/adapters/gen/
+	@echo "🧹 Cleaning build artifacts..."
+	@rm -rf app/bin/
+	@rm -rf app/handlers/http/oapi/*.gen.go
+	@rm -rf front/dist/
+	@rm -rf front/src/adapters/gen/
+	@echo "✅ Build artifacts cleaned"
 
 # Help
 help: ## Show help

@@ -6,6 +6,7 @@
 
 ```
 discriminator-demo/
+├── Makefile               # コード生成コマンド
 ├── app/                    # Goバックエンド
 │   ├── main.go            # メインサーバーファイル
 │   ├── go.mod             # Go依存関係
